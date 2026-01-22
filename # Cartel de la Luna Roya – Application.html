@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cartel de la Luna Roja</title>
+
+<style>
+:root{
+  --black-900:#070707;
+  --black-800:#0e0e0e;
+  --gray-600:#2c2c2c;
+  --white:#fff;
+  --neon-red:#ff1a1a;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+  font-family:Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--black-900);
+  color:var(--white);
+  min-height:100vh;
+}
+
+/* Smoke */
+.smoke-layer{
+  position:fixed;inset:0;pointer-events:none;
+  background:radial-gradient(circle,rgba(255,26,26,.05),transparent 75%);
+  animation:smoke 90s linear infinite;
+}
+@keyframes smoke{
+  0%{transform:translate(0,0)}
+  50%{transform:translate(40px,-40px)}
+  100%{transform:translate(0,0)}
+}
+
+/* Lobby */
+#lobby{
+  position:fixed;inset:0;
+  display:flex;flex-direction:column;
+  justify-content:center;align-items:center;
+  z-index:10;
+}
+#lobby h1{
+  font-size:4rem;
+  color:var(--neon-red);
+  text-shadow:0 0 30px rgba(255,26,26,.7);
+  margin-bottom:40px;
+}
+.lobby-buttons{
+  display:flex;gap:20px;flex-wrap:wrap;
+}
+.lobby-buttons button{
+  padding:14px 28px;
+  background:transparent;
+  border:1px solid var(--neon-red);
+  color:#fff;
+  border-radius:12px;
+  cursor:pointer;
+  font-weight:600;
+}
+
+/* Back */
+#backLobby{
+  position:fixed;
+  top:25px;left:25px;
+  font-size:1.8rem;
+  color:var(--neon-red);
+  cursor:pointer;
+  opacity:0;
+  transition:.3s;
+}
+#backLobby.visible{opacity:1}
+
+/* Sections */
+main{
+  padding:80px 20px;
+  display:flex;
+  justify-content:center;
+}
+section{
+  width:100%;
+  max-width:900px;
+  background:var(--black-800);
+  padding:36px;
+  border-radius:14px;
+  box-shadow:0 0 30px rgba(255,26,26,.3);
+  display:none;
+}
+section.active{display:block}
+
+h2{text-align:center;color:var(--neon-red);margin-bottom:24px}
+
+/* Form */
+label{display:block;margin-bottom:6px}
+input,textarea{
+  width:100%;
+  padding:12px;
+  background:#070707;
+  color:#fff;
+  border:1px solid var(--gray-600);
+  border-radius:8px;
+  margin-bottom:18px;
+}
+textarea{resize:none}
+
+/* Button */
+.fancy-button{
+  padding:16px 36px;
+  border:2px solid var(--neon-red);
+  background:transparent;
+  color:var(--neon-red);
+  font-weight:700;
+  border-radius:14px;
+  cursor:pointer;
+}
+
+/* Status */
+.status{
+  text-align:center;
+  margin-top:18px;
+  font-weight:700;
+  color:#ff1a1a;
+  opacity:0;
+  transition:.4s;
+}
+
+/* Admin modal */
+#adminLoginModal{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,.85);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:100;
+}
+#adminLoginModal.show{display:flex}
+
+#adminLoginModal .box{
+  width:320px;
+  background:#0e0e0e;
+  padding:30px;
+  border-radius:14px;
+  position:relative;
+}
+
+/* Back arrow in modal */
+.modal-back{
+  position:absolute;
+  top:10px;
+  left:12px;
+  cursor:pointer;
+  font-size:1.2rem;
+  color:var(--neon-red);
+}
+
+/* Admin log */
+.log-entry{
+  border-bottom:1px solid var(--gray-600);
+  padding:12px 0;
+  font-size:.9rem;
+}
+</style>
+</head>
+
+<body>
+
+<div class="smoke-layer"></div>
+
+<!-- Lobby -->
+<div id="lobby">
+  <h1>Cartel de la Luna Roja</h1>
+  <div class="lobby-buttons">
+    <button onclick="openSection('prijava')">PRIJAVA</button>
+    <button onclick="openSection('obleke')">OBLEKE</button>
+    <button onclick="openSection('vozila')">VOZILA</button>
+    <button onclick="openSection('oprema')">OPREMA</button>
+    <button onclick="openAdminLogin()">ADMIN PANEL</button>
+  </div>
+</div>
+
+<div id="backLobby" onclick="showLobby()">←</div>
+
+<main>
+<section id="prijava">
+  <h2>Prijavni obrazec</h2>
+  <form id="applicationForm">
+    <label>Polno ime</label><input id="name" required>
+    <label>Starost</label><input id="age" type="number" min="15" required>
+    <label>Discord</label><input id="discord" required>
+    <label>Vloga</label><input id="role" required>
+    <label>Izkušnje</label><textarea id="experience"></textarea>
+    <label>Razlog</label><textarea id="reason" required></textarea>
+    <button class="fancy-button">ODDAJ PRIJAVO</button>
+  </form>
+  <div id="status" class="status"></div>
+</section>
+
+<section id="obleke"><h2>Obleke</h2></section>
+<section id="vozila"><h2>Vozila</h2></section>
+<section id="oprema"><h2>Oprema</h2></section>
+
+<section id="adminPanel">
+  <h2>Admin Panel</h2>
+  <div id="adminLog"></div>
+  <button class="fancy-button" onclick="showLobby()">Logout</button>
+</section>
+</main>
+
+<!-- Admin Login Modal -->
+<div id="adminLoginModal">
+  <div class="box">
+    <div class="modal-back" onclick="closeAdminLogin()">←</div>
+    <h2 style="text-align:center;color:#ff1a1a;margin-bottom:20px;">Admin Access</h2>
+    <input id="adminUser" type="password" placeholder="Admin email">
+    <input id="adminPass" type="password" placeholder="Admin password">
+    <div style="text-align:center;">
+      <button class="fancy-button" onclick="checkAdminLogin()">Verify</button>
+    </div>
+    <div id="adminLoginStatus" class="status"></div>
+  </div>
+</div>
+
+<script>
+/* CONSTANTS */
+const DISCORD_WEBHOOK_URL =
+"https://discord.com/api/webhooks/1463776938308010077/rtuM1AWc5IWLTVOir5wQKxeJpRF918-DrFSA0PC_KdgE4wG2x1pMEJCj4RurNkuuWORR";
+
+/* SHA-256 */
+async function sha256(text){
+  const data=new TextEncoder().encode(text);
+  const hash=await crypto.subtle.digest("SHA-256",data);
+  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+}
+
+/* ADMIN HASH INIT */
+let REF_EMAIL_HASH="", REF_PASS_HASH="";
+(async()=>{
+  REF_EMAIL_HASH=await sha256("milevteo.9@gmail.com");
+  REF_PASS_HASH =await sha256("jAGLdk3s#");
+})();
+
+/* NAV */
+const sections=document.querySelectorAll("section");
+function openSection(id){
+  lobby.style.display="none";
+  backLobby.classList.add("visible");
+  sections.forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
+function showLobby(){
+  lobby.style.display="flex";
+  backLobby.classList.remove("visible");
+  sections.forEach(s=>s.classList.remove("active"));
+}
+
+/* ADMIN LOGIN */
+function openAdminLogin(){
+  adminLoginModal.classList.add("show");
+  adminLoginStatus.style.opacity=0;
+}
+function closeAdminLogin(){
+  adminLoginModal.classList.remove("show");
+}
+async function checkAdminLogin(){
+  const eHash=await sha256(adminUser.value.trim());
+  const pHash=await sha256(adminPass.value);
+  if(eHash===REF_EMAIL_HASH && pHash===REF_PASS_HASH){
+    closeAdminLogin();
+    openSection("adminPanel");
+  }else{
+    adminLoginStatus.textContent="Dostop zavrnjen";
+    adminLoginStatus.style.opacity=1;
+  }
+}
+
+/* APPLICATION */
+applicationForm.addEventListener("submit",async e=>{
+  e.preventDefault();
+  const data={
+    name:name.value,
+    age:age.value,
+    discord:discord.value,
+    role:role.value,
+    experience:experience.value||"—",
+    reason:reason.value
+  };
+
+  await fetch(DISCORD_WEBHOOK_URL,{
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body:JSON.stringify({
+      embeds:[{
+        title:"Nova prijava",
+        color:0xff1a1a,
+        fields:Object.entries(data).map(([k,v])=>({name:k,value:v}))
+      }]
+    })
+  });
+
+  const entry=document.createElement("div");
+  entry.className="log-entry";
+  entry.innerHTML=Object.entries(data).map(([k,v])=>`<b>${k}:</b> ${v}`).join("<br>");
+  adminLog.prepend(entry);
+
+  status.textContent="PRIJAVA ODDANA";
+  status.style.opacity=1;
+  setTimeout(()=>status.style.opacity=0,3000);
+  applicationForm.reset();
+});
+</script>
+
+</body>
+</html>
