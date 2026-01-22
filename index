@@ -4,170 +4,116 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cartel de la Luna Roja</title>
-
 <style>
-:root{
-  --black-900:#070707;
-  --black-800:#0e0e0e;
-  --gray-600:#2c2c2c;
-  --white:#fff;
-  --neon-red:#ff1a1a;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{
-  font-family:Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--black-900);
-  color:var(--white);
-  min-height:100vh;
+:root {
+  --black-900: #070707;
+  --black-800: #0e0e0e;
+  --gray-600: #2c2c2c;
+  --white: #ffffff;
+  --neon-red: #ff1a1a;
 }
 
-/* Smoke */
-.smoke-layer{
-  position:fixed;inset:0;pointer-events:none;
-  background:radial-gradient(circle,rgba(255,26,26,.05),transparent 75%);
-  animation:smoke 90s linear infinite;
-}
-@keyframes smoke{
-  0%{transform:translate(0,0)}
-  50%{transform:translate(40px,-40px)}
-  100%{transform:translate(0,0)}
+/* Basic resets */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
+  background: var(--black-900);
+  color: var(--white);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
 }
 
-/* Lobby */
-#lobby{
-  position:fixed;inset:0;
-  display:flex;flex-direction:column;
-  justify-content:center;align-items:center;
-  z-index:10;
+/* Red smoke */
+.smoke-layer {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background: radial-gradient(circle at center, rgba(255,26,26,0.08) 0%, transparent 80%);
+  opacity: 0.3;
+  animation: drift 60s linear infinite;
 }
-#lobby h1{
-  font-size:4rem;
-  color:var(--neon-red);
-  text-shadow:0 0 30px rgba(255,26,26,.7);
-  margin-bottom:40px;
+.smoke-layer:nth-child(2) { background: radial-gradient(circle at center, rgba(255,26,26,0.06) 0%, transparent 90%); animation-duration: 80s; opacity: 0.25;}
+.smoke-layer:nth-child(3) { background: radial-gradient(circle at center, rgba(255,26,26,0.05) 0%, transparent 85%); animation-duration: 100s; opacity: 0.2;}
+@keyframes drift { 0%{transform:translate(0,0);}50%{transform:translate(50px,-50px) scale(1.05);}100%{transform:translate(0,0) scale(1);} }
+
+/* Lobby styles */
+#lobby {
+  position: fixed; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:10; transition: all 1s ease;
 }
-.lobby-buttons{
-  display:flex;gap:20px;flex-wrap:wrap;
+#lobby h1 {
+  font-size: 4rem;
+  color: var(--neon-red);
+  text-shadow: 0 0 12px rgba(255,26,26,0.7), 0 0 36px rgba(255,26,26,0.5);
+  margin-bottom: 40px;
+  text-align: center;
+  animation: neonPulse 2s infinite;
 }
-.lobby-buttons button{
+@keyframes neonPulse {
+  0%,100%{text-shadow:0 0 12px rgba(255,26,26,0.7),0 0 24px rgba(255,26,26,0.5);}
+  50%{text-shadow:0 0 18px rgba(255,26,26,1),0 0 36px rgba(255,26,26,0.7);}
+}
+
+.lobby-buttons { display:flex; gap:28px; flex-wrap:wrap; justify-content:center;}
+.lobby-buttons button {
   padding:14px 28px;
-  background:transparent;
+  background: transparent;
   border:1px solid var(--neon-red);
-  color:#fff;
   border-radius:12px;
-  cursor:pointer;
+  color: var(--white);
   font-weight:600;
-}
-
-/* Back */
-#backLobby{
-  position:fixed;
-  top:25px;left:25px;
-  font-size:1.8rem;
-  color:var(--neon-red);
   cursor:pointer;
-  opacity:0;
-  transition:.3s;
+  transition: all 0.3s ease;
 }
-#backLobby.visible{opacity:1}
+.lobby-buttons button:hover { box-shadow:0 0 20px rgba(255,26,26,0.7);}
+
+/* Back arrow */
+#backLobby {
+  position: fixed; top: 30px; left:30px; font-size:2rem; color:var(--neon-red); cursor:pointer; z-index:15; opacity:0; transition:opacity 0.5s ease;
+}
+#backLobby.visible { opacity:1; }
+#backLobby:hover { transform:scale(1.2); transition:0.3s ease; }
 
 /* Sections */
-main{
-  padding:80px 20px;
-  display:flex;
-  justify-content:center;
-}
-section{
-  width:100%;
-  max-width:900px;
-  background:var(--black-800);
-  padding:36px;
-  border-radius:14px;
-  box-shadow:0 0 30px rgba(255,26,26,.3);
-  display:none;
-}
-section.active{display:block}
-
-h2{text-align:center;color:var(--neon-red);margin-bottom:24px}
+main { padding:50px 20px 100px; display:flex; flex-direction:column; align-items:center; position:relative; z-index:10; }
+section { width:100%; max-width:900px; margin-bottom:60px; background:var(--black-800); border-radius:14px; padding:36px; box-shadow:0 0 30px rgba(255,26,26,0.3); display:none; opacity:0; transform:translateY(20px); transition:0.6s ease; }
+section.active { display:block; opacity:1; transform:translateY(0);}
+h2 { margin-bottom:24px; text-align:center; color:var(--neon-red); text-shadow:0 0 10px rgba(255,26,26,0.5); }
 
 /* Form */
-label{display:block;margin-bottom:6px}
-input,textarea{
-  width:100%;
-  padding:12px;
-  background:#070707;
-  color:#fff;
-  border:1px solid var(--gray-600);
-  border-radius:8px;
-  margin-bottom:18px;
-}
-textarea{resize:none}
+label { display:block; margin-bottom:6px; font-size:0.9rem; color:#c9c9c9; }
+input, textarea { width:100%; padding:12px; border-radius:8px; border:1px solid var(--gray-600); background:var(--black-900); color:var(--white); margin-bottom:18px;}
+input:focus, textarea:focus { outline:none; border-color:var(--neon-red); box-shadow:0 0 10px rgba(255,26,26,0.5); }
+textarea{resize:none;}
 
-/* Button */
-.fancy-button{
-  padding:16px 36px;
-  border:2px solid var(--neon-red);
-  background:transparent;
-  color:var(--neon-red);
-  font-weight:700;
-  border-radius:14px;
-  cursor:pointer;
-}
+/* Fancy submit button */
+.fancy-button { padding:16px 36px; font-size:1.1rem; font-weight:700; color:#ff1a1a; background:transparent; border:2px solid #ff1a1a; border-radius:12px; cursor:pointer; position:relative; overflow:hidden; transition:all 0.3s ease; z-index:1;}
+.fancy-button::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background: rgba(255,26,26,0.2); transform:skewX(-20deg); transition:all 0.5s ease; z-index:-1;}
+.fancy-button:hover::before { left:100%; }
+.fancy-button:hover { color:#fff; box-shadow:0 0 20px rgba(255,26,26,0.9),0 0 40px rgba(255,26,26,0.5);}
 
 /* Status */
-.status{
-  text-align:center;
-  margin-top:18px;
-  font-weight:700;
-  color:#ff1a1a;
-  opacity:0;
-  transition:.4s;
-}
+.status { text-align:center; margin-top:18px; font-weight:700; opacity:0; transition:0.5s; color:#ff1a1a; }
 
 /* Admin modal */
-#adminLoginModal{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,.85);
-  display:none;
-  justify-content:center;
-  align-items:center;
-  z-index:100;
-}
-#adminLoginModal.show{display:flex}
+#adminLoginModal{ position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:100;}
+#adminLoginModal.show { display:flex; animation:modalIn 0.5s ease forwards;}
+#adminLoginModal .box { width:320px; background:#0e0e0e; padding:30px; border-radius:14px; box-shadow:0 0 30px rgba(255,26,26,0.6); transform:scale(0.8); opacity:0; }
+#adminLoginModal.show .box { transform:scale(1); opacity:1; transition:transform 0.5s ease, opacity 0.5s ease; }
+@keyframes modalIn {0%{opacity:0; transform:scale(0.8);}100%{opacity:1; transform:scale(1);}}
 
-#adminLoginModal .box{
-  width:320px;
-  background:#0e0e0e;
-  padding:30px;
-  border-radius:14px;
-  position:relative;
-}
+/* Admin panel log */
+#adminPanel .log-entry { border-bottom:1px solid var(--gray-600); padding:12px 0; font-size:0.9rem; position:relative; transition: all 0.4s; }
+#adminPanel .log-entry span{display:block;color:#fff;}
+#adminPanel .log-entry:last-child{border-bottom:none;}
+.delete-btn { position:absolute; right:0; top:0; padding:2px 6px; background:#ff1a1a; border:none; color:#fff; cursor:pointer; border-radius:4px; }
 
-/* Back arrow in modal */
-.modal-back{
-  position:absolute;
-  top:10px;
-  left:12px;
-  cursor:pointer;
-  font-size:1.2rem;
-  color:var(--neon-red);
-}
-
-/* Admin log */
-.log-entry{
-  border-bottom:1px solid var(--gray-600);
-  padding:12px 0;
-  font-size:.9rem;
-}
 </style>
 </head>
-
 <body>
 
 <div class="smoke-layer"></div>
+<div class="smoke-layer"></div>
+<div class="smoke-layer"></div>
 
-<!-- Lobby -->
 <div id="lobby">
   <h1>Cartel de la Luna Roja</h1>
   <div class="lobby-buttons">
@@ -179,21 +125,21 @@ textarea{resize:none}
   </div>
 </div>
 
-<div id="backLobby" onclick="showLobby()">←</div>
+<div id="backLobby" onclick="showLobby()">← LOBBY</div>
 
 <main>
 <section id="prijava">
-  <h2>Prijavni obrazec</h2>
-  <form id="applicationForm">
-    <label>Polno ime</label><input id="name" required>
-    <label>Starost</label><input id="age" type="number" min="15" required>
-    <label>Discord</label><input id="discord" required>
-    <label>Vloga</label><input id="role" required>
-    <label>Izkušnje</label><textarea id="experience"></textarea>
-    <label>Razlog</label><textarea id="reason" required></textarea>
-    <button class="fancy-button">ODDAJ PRIJAVO</button>
-  </form>
-  <div id="status" class="status"></div>
+<h2>Prijavni obrazec</h2>
+<form id="applicationForm">
+<label>Polno ime</label><input id="name" required>
+<label>Starost</label><input id="age" type="number" min="15" required>
+<label>Discord</label><input id="discord" required>
+<label>Vloga</label><input id="role" required>
+<label>Pretekle izkušnje</label><textarea id="experience"></textarea>
+<label>Zakaj se želiš pridružiti?</label><textarea id="reason" required></textarea>
+<button class="fancy-button" type="submit">ODDAJ PRIJAVO</button>
+</form>
+<div id="status" class="status"></div>
 </section>
 
 <section id="obleke"><h2>Obleke</h2></section>
@@ -201,112 +147,109 @@ textarea{resize:none}
 <section id="oprema"><h2>Oprema</h2></section>
 
 <section id="adminPanel">
-  <h2>Admin Panel</h2>
-  <div id="adminLog"></div>
-  <button class="fancy-button" onclick="showLobby()">Logout</button>
+<h2>Admin Panel</h2>
+<div id="adminLog"></div>
+<button class="fancy-button" onclick="showLobby()">Logout</button>
 </section>
-</main>
 
-<!-- Admin Login Modal -->
 <div id="adminLoginModal">
-  <div class="box">
-    <div class="modal-back" onclick="closeAdminLogin()">←</div>
-    <h2 style="text-align:center;color:#ff1a1a;margin-bottom:20px;">Admin Access</h2>
-    <input id="adminUser" type="password" placeholder="Admin email">
-    <input id="adminPass" type="password" placeholder="Admin password">
-    <div style="text-align:center;">
-      <button class="fancy-button" onclick="checkAdminLogin()">Verify</button>
-    </div>
-    <div id="adminLoginStatus" class="status"></div>
-  </div>
+<div class="box">
+<h2 style="text-align:center;color:#ff1a1a;margin-bottom:20px;">Admin Access</h2>
+<input id="adminUser" type="password" placeholder="Admin email">
+<input id="adminPass" type="password" placeholder="Admin password">
+<div style="text-align:center;"><button class="fancy-button" onclick="checkAdminLogin()">Verify</button></div>
+<div id="adminLoginStatus" class="status"></div>
+</div>
 </div>
 
 <script>
-/* CONSTANTS */
-const DISCORD_WEBHOOK_URL =
-"https://discord.com/api/webhooks/1463776938308010077/rtuM1AWc5IWLTVOir5wQKxeJpRF918-DrFSA0PC_KdgE4wG2x1pMEJCj4RurNkuuWORR";
-
-/* SHA-256 */
-async function sha256(text){
-  const data=new TextEncoder().encode(text);
-  const hash=await crypto.subtle.digest("SHA-256",data);
-  return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
-}
-
-/* ADMIN HASH INIT */
+/* --- HASH ADMIN --- */
+async function sha256(text){const data=new TextEncoder().encode(text);const hash=await crypto.subtle.digest("SHA-256",data);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");}
 let REF_EMAIL_HASH="", REF_PASS_HASH="";
-(async()=>{
-  REF_EMAIL_HASH=await sha256("milevteo.9@gmail.com");
-  REF_PASS_HASH =await sha256("jAGLdk3s#");
-})();
+(async()=>{REF_EMAIL_HASH=await sha256("milevteo.9@gmail.com"); REF_PASS_HASH=await sha256("jAGLdk3s#");})();
 
-/* NAV */
+/* --- NAVIGATION --- */
 const sections=document.querySelectorAll("section");
-function openSection(id){
-  lobby.style.display="none";
-  backLobby.classList.add("visible");
-  sections.forEach(s=>s.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-function showLobby(){
-  lobby.style.display="flex";
-  backLobby.classList.remove("visible");
-  sections.forEach(s=>s.classList.remove("active"));
-}
+function openSection(id){document.getElementById("lobby").style.display="none";sections.forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.getElementById("backLobby").classList.add("visible");}
+function showLobby(){document.getElementById("lobby").style.display="flex";sections.forEach(s=>s.classList.remove("active"));document.getElementById("backLobby").classList.remove("visible");}
 
-/* ADMIN LOGIN */
-function openAdminLogin(){
-  adminLoginModal.classList.add("show");
-  adminLoginStatus.style.opacity=0;
-}
-function closeAdminLogin(){
-  adminLoginModal.classList.remove("show");
-}
+/* --- ADMIN LOGIN --- */
+const adminUser=document.getElementById("adminUser");
+const adminPass=document.getElementById("adminPass");
+const adminLoginStatus=document.getElementById("adminLoginStatus");
+const adminLoginModal=document.getElementById("adminLoginModal");
+
+function openAdminLogin(){adminLoginModal.classList.add("show"); adminLoginStatus.style.opacity=0;}
+function closeAdminLogin(){adminLoginModal.classList.remove("show");}
 async function checkAdminLogin(){
   const eHash=await sha256(adminUser.value.trim());
   const pHash=await sha256(adminPass.value);
   if(eHash===REF_EMAIL_HASH && pHash===REF_PASS_HASH){
     closeAdminLogin();
+    loadAdminLog();
     openSection("adminPanel");
-  }else{
-    adminLoginStatus.textContent="Dostop zavrnjen";
+  } else {
+    adminLoginStatus.style.color="#ff4d4d";
+    adminLoginStatus.textContent="❌ Dostop zavrnjen";
     adminLoginStatus.style.opacity=1;
   }
 }
 
-/* APPLICATION */
-applicationForm.addEventListener("submit",async e=>{
+/* --- PERSISTENT ADMIN LOG --- */
+const applicationForm=document.getElementById("applicationForm");
+const status=document.getElementById("status");
+const adminLog=document.getElementById("adminLog");
+
+function saveLogToStorage(){
+  const entries=[];
+  adminLog.querySelectorAll(".log-entry").forEach(entry=>{
+    const data={};
+    entry.querySelectorAll("span").forEach(span=>{
+      const [key,value]=span.textContent.split(": ");
+      data[key]=value;
+    });
+    entries.push(data);
+  });
+  localStorage.setItem("adminLog",JSON.stringify(entries));
+}
+
+function loadAdminLog(){
+  adminLog.innerHTML="";
+  const entries=JSON.parse(localStorage.getItem("adminLog")||"[]");
+  entries.forEach(data=>{
+    const entry=document.createElement("div");
+    entry.className="log-entry";
+    entry.innerHTML=Object.entries(data).map(([k,v])=>`<span>${k}: ${v}</span>`).join("");
+    const delBtn=document.createElement("button");
+    delBtn.textContent="X"; delBtn.className="delete-btn"; delBtn.onclick=()=>{entry.remove(); saveLogToStorage();}
+    entry.appendChild(delBtn);
+    adminLog.prepend(entry);
+  });
+}
+
+/* --- APPLICATION FORM --- */
+applicationForm.addEventListener("submit", async e=>{
   e.preventDefault();
   const data={
-    name:name.value,
-    age:age.value,
-    discord:discord.value,
-    role:role.value,
-    experience:experience.value||"—",
-    reason:reason.value
+    Ime:name.value,
+    Starost:age.value,
+    Discord:discord.value,
+    Vloga:role.value,
+    Izkušnje:experience.value||"—",
+    Razlog:reason.value
   };
-
-  await fetch(DISCORD_WEBHOOK_URL,{
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body:JSON.stringify({
-      embeds:[{
-        title:"Nova prijava",
-        color:0xff1a1a,
-        fields:Object.entries(data).map(([k,v])=>({name:k,value:v}))
-      }]
-    })
-  });
-
   const entry=document.createElement("div");
   entry.className="log-entry";
-  entry.innerHTML=Object.entries(data).map(([k,v])=>`<b>${k}:</b> ${v}`).join("<br>");
+  entry.innerHTML=Object.entries(data).map(([k,v])=>`<span>${k}: ${v}</span>`).join("");
+  const delBtn=document.createElement("button");
+  delBtn.textContent="X"; delBtn.className="delete-btn"; delBtn.onclick=()=>{entry.remove(); saveLogToStorage();}
+  entry.appendChild(delBtn);
   adminLog.prepend(entry);
-
   status.textContent="PRIJAVA ODDANA";
   status.style.opacity=1;
   setTimeout(()=>status.style.opacity=0,3000);
   applicationForm.reset();
+  saveLogToStorage();
 });
 </script>
 
