@@ -1,257 +1,279 @@
 <!DOCTYPE html>
-<html lang="sl">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cartel de la Luna Roja</title>
+<title>Cloud OS — Minimal by Design</title>
 <style>
-:root {
-  --black-900: #070707;
-  --black-800: #0e0e0e;
-  --gray-600: #2c2c2c;
-  --white: #ffffff;
-  --neon-red: #ff1a1a;
-}
+  :root {
+    color-scheme: dark;
+    --sky-950: #070b12;
+    --sky-900: #0c141f;
+    --sky-800: #0f1f2f;
+    --mist-200: #d9f3ff;
+    --mist-300: #bfe8ff;
+    --mist-400: #99dbff;
+    --cloud: rgba(191, 232, 255, 0.16);
+    --cloud-strong: rgba(191, 232, 255, 0.3);
+  }
 
-/* Basic resets */
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: 'Segoe UI', Roboto, Arial, sans-serif;
-  background: var(--black-900);
-  color: var(--white);
-  min-height: 100vh;
-  overflow-x: hidden;
-  position: relative;
-}
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
 
-/* Red smoke */
-.smoke-layer {
-  position: fixed; inset: 0; pointer-events: none; z-index: 0;
-  background: radial-gradient(circle at center, rgba(255,26,26,0.08) 0%, transparent 80%);
-  opacity: 0.3;
-  animation: drift 60s linear infinite;
-}
-.smoke-layer:nth-child(2) { background: radial-gradient(circle at center, rgba(255,26,26,0.06) 0%, transparent 90%); animation-duration: 80s; opacity: 0.25;}
-.smoke-layer:nth-child(3) { background: radial-gradient(circle at center, rgba(255,26,26,0.05) 0%, transparent 85%); animation-duration: 100s; opacity: 0.2;}
-@keyframes drift { 0%{transform:translate(0,0);}50%{transform:translate(50px,-50px) scale(1.05);}100%{transform:translate(0,0) scale(1);} }
+  body {
+    font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+    background: radial-gradient(circle at top, #18253a 0%, var(--sky-950) 65%);
+    color: var(--mist-200);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px 20px 80px;
+  }
 
-/* Lobby styles */
-#lobby {
-  position: fixed; inset:0; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:10; transition: all 1s ease;
-}
-#lobby h1 {
-  font-size: 4rem;
-  color: var(--neon-red);
-  text-shadow: 0 0 12px rgba(255,26,26,0.7), 0 0 36px rgba(255,26,26,0.5);
-  margin-bottom: 40px;
-  text-align: center;
-  animation: neonPulse 2s infinite;
-}
-@keyframes neonPulse {
-  0%,100%{text-shadow:0 0 12px rgba(255,26,26,0.7),0 0 24px rgba(255,26,26,0.5);}
-  50%{text-shadow:0 0 18px rgba(255,26,26,1),0 0 36px rgba(255,26,26,0.7);}
-}
+  .shell {
+    width: min(980px, 100%);
+    background: linear-gradient(180deg, var(--sky-900), var(--sky-950));
+    border-radius: 24px;
+    padding: 36px 32px 28px;
+    box-shadow: 0 20px 80px rgba(5, 12, 20, 0.7);
+    position: relative;
+    overflow: hidden;
+  }
 
-.lobby-buttons { display:flex; gap:28px; flex-wrap:wrap; justify-content:center;}
-.lobby-buttons button {
-  padding:14px 28px;
-  background: transparent;
-  border:1px solid var(--neon-red);
-  border-radius:12px;
-  color: var(--white);
-  font-weight:600;
-  cursor:pointer;
-  transition: all 0.3s ease;
-}
-.lobby-buttons button:hover { box-shadow:0 0 20px rgba(255,26,26,0.7);}
+  .shell::before,
+  .shell::after {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 180px;
+    background: radial-gradient(circle, var(--cloud-strong), transparent 70%);
+    filter: blur(12px);
+    opacity: 0.9;
+  }
 
-/* Back arrow */
-#backLobby {
-  position: fixed; top: 30px; left:30px; font-size:2rem; color:var(--neon-red); cursor:pointer; z-index:15; opacity:0; transition:opacity 0.5s ease;
-}
-#backLobby.visible { opacity:1; }
-#backLobby:hover { transform:scale(1.2); transition:0.3s ease; }
+  .shell::before {
+    top: -60px;
+    left: -40px;
+  }
 
-/* Sections */
-main { padding:50px 20px 100px; display:flex; flex-direction:column; align-items:center; position:relative; z-index:10; }
-section { width:100%; max-width:900px; margin-bottom:60px; background:var(--black-800); border-radius:14px; padding:36px; box-shadow:0 0 30px rgba(255,26,26,0.3); display:none; opacity:0; transform:translateY(20px); transition:0.6s ease; }
-section.active { display:block; opacity:1; transform:translateY(0);}
-h2 { margin-bottom:24px; text-align:center; color:var(--neon-red); text-shadow:0 0 10px rgba(255,26,26,0.5); }
+  .shell::after {
+    bottom: -80px;
+    right: -30px;
+  }
 
-/* Form */
-label { display:block; margin-bottom:6px; font-size:0.9rem; color:#c9c9c9; }
-input, textarea { width:100%; padding:12px; border-radius:8px; border:1px solid var(--gray-600); background:var(--black-900); color:var(--white); margin-bottom:18px;}
-input:focus, textarea:focus { outline:none; border-color:var(--neon-red); box-shadow:0 0 10px rgba(255,26,26,0.5); }
-textarea{resize:none;}
+  header {
+    display: flex;
+    justify-content: space-between;
+    gap: 24px;
+    align-items: center;
+    margin-bottom: 32px;
+  }
 
-/* Fancy submit button */
-.fancy-button { padding:16px 36px; font-size:1.1rem; font-weight:700; color:#ff1a1a; background:transparent; border:2px solid #ff1a1a; border-radius:12px; cursor:pointer; position:relative; overflow:hidden; transition:all 0.3s ease; z-index:1;}
-.fancy-button::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background: rgba(255,26,26,0.2); transform:skewX(-20deg); transition:all 0.5s ease; z-index:-1;}
-.fancy-button:hover::before { left:100%; }
-.fancy-button:hover { color:#fff; box-shadow:0 0 20px rgba(255,26,26,0.9),0 0 40px rgba(255,26,26,0.5);}
+  .brand h1 {
+    font-size: clamp(2.2rem, 5vw, 3.2rem);
+    letter-spacing: 0.02em;
+  }
 
-/* Status */
-.status { text-align:center; margin-top:18px; font-weight:700; opacity:0; transition:0.5s; color:#ff1a1a; }
+  .brand p {
+    color: var(--mist-400);
+    margin-top: 8px;
+    max-width: 420px;
+    line-height: 1.6;
+  }
 
-/* Admin modal */
-#adminLoginModal{ position:fixed; inset:0; background:rgba(0,0,0,0.85); display:none; justify-content:center; align-items:center; z-index:100;}
-#adminLoginModal.show { display:flex; animation:modalIn 0.5s ease forwards;}
-#adminLoginModal .box { width:320px; background:#0e0e0e; padding:30px; border-radius:14px; box-shadow:0 0 30px rgba(255,26,26,0.6); transform:scale(0.8); opacity:0; }
-#adminLoginModal.show .box { transform:scale(1); opacity:1; transition:transform 0.5s ease, opacity 0.5s ease; }
-@keyframes modalIn {0%{opacity:0; transform:scale(0.8);}100%{opacity:1; transform:scale(1);}}
+  .status {
+    text-align: right;
+    font-size: 0.95rem;
+    color: var(--mist-300);
+  }
 
-/* Admin panel log */
-#adminPanel .log-entry { border-bottom:1px solid var(--gray-600); padding:12px 0; font-size:0.9rem; position:relative; transition: all 0.4s; }
-#adminPanel .log-entry span{display:block;color:#fff;}
-#adminPanel .log-entry:last-child{border-bottom:none;}
-.delete-btn { position:absolute; right:0; top:0; padding:2px 6px; background:#ff1a1a; border:none; color:#fff; cursor:pointer; border-radius:4px; }
+  .status strong {
+    display: block;
+    font-size: 1.4rem;
+    color: var(--mist-200);
+  }
 
+  .tabs {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+
+  .tabs button {
+    background: transparent;
+    border: 1px solid var(--cloud);
+    color: var(--mist-200);
+    padding: 10px 14px;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: 0.2s ease;
+  }
+
+  .tabs button.active {
+    background: var(--cloud-strong);
+    border-color: var(--mist-400);
+    color: white;
+  }
+
+  .panel {
+    display: none;
+    background: rgba(7, 14, 24, 0.6);
+    border: 1px solid var(--cloud);
+    border-radius: 18px;
+    padding: 24px;
+    min-height: 220px;
+    box-shadow: inset 0 0 40px rgba(10, 20, 32, 0.6);
+  }
+
+  .panel.active {
+    display: block;
+  }
+
+  .panel h2 {
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+  }
+
+  .panel p {
+    line-height: 1.7;
+    color: var(--mist-300);
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-top: 16px;
+  }
+
+  .card {
+    background: rgba(12, 22, 36, 0.8);
+    border-radius: 16px;
+    border: 1px solid var(--cloud);
+    padding: 16px;
+    color: var(--mist-200);
+  }
+
+  .card span {
+    display: block;
+    color: var(--mist-400);
+    font-size: 0.85rem;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  footer {
+    margin-top: 28px;
+    text-align: center;
+    color: var(--mist-400);
+    font-size: 0.9rem;
+  }
+
+  @media (max-width: 720px) {
+    header {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .status {
+      text-align: left;
+    }
+  }
 </style>
 </head>
 <body>
+  <main class="shell">
+    <header>
+      <div class="brand">
+        <h1>Cloud OS</h1>
+        <p>The minimal operating system built for the calmest workflows: fewer processes, higher FPS, and a sky-first interface.</p>
+      </div>
+      <div class="status">
+        <strong>0.8%</strong>
+        baseline load · latency-first
+      </div>
+    </header>
 
-<div class="smoke-layer"></div>
-<div class="smoke-layer"></div>
-<div class="smoke-layer"></div>
+    <nav class="tabs" aria-label="Cloud OS sections">
+      <button class="tab active" data-panel="overview">Overview</button>
+      <button class="tab" data-panel="performance">Performance</button>
+      <button class="tab" data-panel="cloud">Cloud Core</button>
+      <button class="tab" data-panel="security">Security</button>
+      <button class="tab" data-panel="roadmap">Roadmap</button>
+    </nav>
 
-<div id="lobby">
-  <h1>Cartel de la Luna Roja</h1>
-  <div class="lobby-buttons">
-    <button onclick="openSection('prijava')">PRIJAVA</button>
-    <button onclick="openSection('obleke')">OBLEKE</button>
-    <button onclick="openSection('vozila')">VOZILA</button>
-    <button onclick="openSection('oprema')">OPREMA</button>
-    <button onclick="openAdminLogin()">ADMIN PANEL</button>
-  </div>
-</div>
+    <section id="overview" class="panel active">
+      <h2>Designed for less</h2>
+      <p>Cloud OS drops the noise. The kernel runs only what you ask, leaving the GPU uninterrupted for ultra-smooth motion and the CPU idle when it can be.</p>
+      <div class="grid">
+        <div class="card"><span>Minimal</span>One compositing layer, one shell, zero background clutter.</div>
+        <div class="card"><span>Responsive</span>Frame pacing tuned to keep the desktop locked on target.</div>
+        <div class="card"><span>Cloud-first</span>Instantly restores your workspace from any device.</div>
+      </div>
+    </section>
 
-<div id="backLobby" onclick="showLobby()">← LOBBY</div>
+    <section id="performance" class="panel">
+      <h2>Performance that stays calm</h2>
+      <p>We prioritize stable FPS, low-latency IO, and predictable memory. Cloud OS ships with a streamlined scheduler that favors foreground focus.</p>
+      <div class="grid">
+        <div class="card"><span>FPS</span>Adaptive target sync with zero busy-wait loops.</div>
+        <div class="card"><span>Processes</span>Only essential daemons remain alive; everything else sleeps.</div>
+        <div class="card"><span>Thermals</span>Smart throttling keeps fan noise and heat minimal.</div>
+      </div>
+    </section>
 
-<main>
-<section id="prijava">
-<h2>Prijavni obrazec</h2>
-<form id="applicationForm">
-<label>Polno ime</label><input id="name" required>
-<label>Starost</label><input id="age" type="number" min="15" required>
-<label>Discord</label><input id="discord" required>
-<label>Vloga</label><input id="role" required>
-<label>Pretekle izkušnje</label><textarea id="experience"></textarea>
-<label>Zakaj se želiš pridružiti?</label><textarea id="reason" required></textarea>
-<button class="fancy-button" type="submit">ODDAJ PRIJAVO</button>
-</form>
-<div id="status" class="status"></div>
-</section>
+    <section id="cloud" class="panel">
+      <h2>Cloud core services</h2>
+      <p>Every workspace is synced via edge nodes, so you can resume in seconds. The data layer is encrypted end-to-end and cached locally for offline resilience.</p>
+      <div class="grid">
+        <div class="card"><span>Sync</span>Delta-based snapshots with instant rollback.</div>
+        <div class="card"><span>Edge</span>Region-aware routing keeps your sessions close.</div>
+        <div class="card"><span>Offline</span>Local cache merges once you reconnect.</div>
+      </div>
+    </section>
 
-<section id="obleke"><h2>Obleke</h2></section>
-<section id="vozila"><h2>Vozila</h2></section>
-<section id="oprema"><h2>Oprema</h2></section>
+    <section id="security" class="panel">
+      <h2>Security without friction</h2>
+      <p>Identity stays lightweight with hardware-backed keys and zero-trust partitions for every app. You stay in control of every permission.</p>
+      <div class="grid">
+        <div class="card"><span>Identity</span>Passkeys + biometric unlock baked in.</div>
+        <div class="card"><span>Sandboxing</span>Each app gets isolated storage and memory caps.</div>
+        <div class="card"><span>Privacy</span>Telemetry is opt-in, transparent, and minimal.</div>
+      </div>
+    </section>
 
-<section id="adminPanel">
-<h2>Admin Panel</h2>
-<div id="adminLog"></div>
-<button class="fancy-button" onclick="showLobby()">Logout</button>
-</section>
+    <section id="roadmap" class="panel">
+      <h2>What’s next</h2>
+      <p>Cloud OS continues to focus on speed, clarity, and zero distraction. New releases will prioritize ecosystem stability and minimal updates.</p>
+      <div class="grid">
+        <div class="card"><span>Q2</span>Cloud OS Lite for ultra-low-power devices.</div>
+        <div class="card"><span>Q3</span>Live collaboration sessions in shared clouds.</div>
+        <div class="card"><span>Q4</span>Developer kit for custom shells and themes.</div>
+      </div>
+    </section>
 
-<div id="adminLoginModal">
-<div class="box">
-<h2 style="text-align:center;color:#ff1a1a;margin-bottom:20px;">Admin Access</h2>
-<input id="adminUser" type="password" placeholder="Admin email">
-<input id="adminPass" type="password" placeholder="Admin password">
-<div style="text-align:center;"><button class="fancy-button" onclick="checkAdminLogin()">Verify</button></div>
-<div id="adminLoginStatus" class="status"></div>
-</div>
-</div>
+    <footer>Cloud OS — built to float above the noise.</footer>
+  </main>
 
 <script>
-/* --- HASH ADMIN --- */
-async function sha256(text){const data=new TextEncoder().encode(text);const hash=await crypto.subtle.digest("SHA-256",data);return Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");}
-let REF_EMAIL_HASH="", REF_PASS_HASH="";
-(async()=>{REF_EMAIL_HASH=await sha256("milevteo.9@gmail.com"); REF_PASS_HASH=await sha256("jAGLdk3s#");})();
+  const tabs = document.querySelectorAll(".tab");
+  const panels = document.querySelectorAll(".panel");
 
-/* --- NAVIGATION --- */
-const sections=document.querySelectorAll("section");
-function openSection(id){document.getElementById("lobby").style.display="none";sections.forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.getElementById("backLobby").classList.add("visible");}
-function showLobby(){document.getElementById("lobby").style.display="flex";sections.forEach(s=>s.classList.remove("active"));document.getElementById("backLobby").classList.remove("visible");}
-
-/* --- ADMIN LOGIN --- */
-const adminUser=document.getElementById("adminUser");
-const adminPass=document.getElementById("adminPass");
-const adminLoginStatus=document.getElementById("adminLoginStatus");
-const adminLoginModal=document.getElementById("adminLoginModal");
-
-function openAdminLogin(){adminLoginModal.classList.add("show"); adminLoginStatus.style.opacity=0;}
-function closeAdminLogin(){adminLoginModal.classList.remove("show");}
-async function checkAdminLogin(){
-  const eHash=await sha256(adminUser.value.trim());
-  const pHash=await sha256(adminPass.value);
-  if(eHash===REF_EMAIL_HASH && pHash===REF_PASS_HASH){
-    closeAdminLogin();
-    loadAdminLog();
-    openSection("adminPanel");
-  } else {
-    adminLoginStatus.style.color="#ff4d4d";
-    adminLoginStatus.textContent="❌ Dostop zavrnjen";
-    adminLoginStatus.style.opacity=1;
-  }
-}
-
-/* --- PERSISTENT ADMIN LOG --- */
-const applicationForm=document.getElementById("applicationForm");
-const status=document.getElementById("status");
-const adminLog=document.getElementById("adminLog");
-
-function saveLogToStorage(){
-  const entries=[];
-  adminLog.querySelectorAll(".log-entry").forEach(entry=>{
-    const data={};
-    entry.querySelectorAll("span").forEach(span=>{
-      const [key,value]=span.textContent.split(": ");
-      data[key]=value;
+  tabs.forEach((tab) => {
+    tab.addEventListener("click", () => {
+      const target = tab.dataset.panel;
+      tabs.forEach((btn) => btn.classList.remove("active"));
+      panels.forEach((panel) => panel.classList.remove("active"));
+      tab.classList.add("active");
+      document.getElementById(target).classList.add("active");
     });
-    entries.push(data);
   });
-  localStorage.setItem("adminLog",JSON.stringify(entries));
-}
-
-function loadAdminLog(){
-  adminLog.innerHTML="";
-  const entries=JSON.parse(localStorage.getItem("adminLog")||"[]");
-  entries.forEach(data=>{
-    const entry=document.createElement("div");
-    entry.className="log-entry";
-    entry.innerHTML=Object.entries(data).map(([k,v])=>`<span>${k}: ${v}</span>`).join("");
-    const delBtn=document.createElement("button");
-    delBtn.textContent="X"; delBtn.className="delete-btn"; delBtn.onclick=()=>{entry.remove(); saveLogToStorage();}
-    entry.appendChild(delBtn);
-    adminLog.prepend(entry);
-  });
-}
-
-/* --- APPLICATION FORM --- */
-applicationForm.addEventListener("submit", async e=>{
-  e.preventDefault();
-  const data={
-    Ime:name.value,
-    Starost:age.value,
-    Discord:discord.value,
-    Vloga:role.value,
-    Izkušnje:experience.value||"—",
-    Razlog:reason.value
-  };
-  const entry=document.createElement("div");
-  entry.className="log-entry";
-  entry.innerHTML=Object.entries(data).map(([k,v])=>`<span>${k}: ${v}</span>`).join("");
-  const delBtn=document.createElement("button");
-  delBtn.textContent="X"; delBtn.className="delete-btn"; delBtn.onclick=()=>{entry.remove(); saveLogToStorage();}
-  entry.appendChild(delBtn);
-  adminLog.prepend(entry);
-  status.textContent="PRIJAVA ODDANA";
-  status.style.opacity=1;
-  setTimeout(()=>status.style.opacity=0,3000);
-  applicationForm.reset();
-  saveLogToStorage();
-});
 </script>
-
 </body>
 </html>
