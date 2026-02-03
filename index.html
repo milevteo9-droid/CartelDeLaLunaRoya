@@ -120,7 +120,7 @@ textarea{resize:none;}
     <button onclick="openSection('prijava')">PRIJAVA</button>
     <button onclick="openSection('obleke')">OBLEKE</button>
     <button onclick="openSection('vozila')">VOZILA</button>
-    <button onclick="openSection('oprema')">OPREMA</button>
+    <button onclick="openSection('os')">OS</button>
     <button onclick="openAdminLogin()">ADMIN PANEL</button>
   </div>
 </div>
@@ -144,7 +144,39 @@ textarea{resize:none;}
 
 <section id="obleke"><h2>Obleke</h2></section>
 <section id="vozila"><h2>Vozila</h2></section>
-<section id="oprema"><h2>Oprema</h2></section>
+<section id="os">
+  <h2>Cartel OS — unikaten, optimiziran, debloat-iran</h2>
+  <p style="margin-bottom:16px; line-height:1.6;">
+    Cartel OS je lahek, hiter in minimalističen operacijski sistem, zgrajen za surovo učinkovitost.
+    Vse nepotrebne storitve, telemetrija in bloat so odstranjeni, da ostane samo tisto, kar res
+    potrebuješ za stabilen in odziven sistem.
+  </p>
+  <h3 style="color:#ff1a1a; margin:18px 0 10px;">Ključne lastnosti</h3>
+  <ul style="margin-left:20px; line-height:1.7;">
+    <li>Ultra-hiter boot in nizka poraba RAM-a (optimiziran kernel in init).</li>
+    <li>Minimalen set paketov + modularen “add-on” sistem po potrebi.</li>
+    <li>Stabilen base, brez nepotrebnih ozadnih procesov.</li>
+    <li>Privzeta varnostna utrditev (firewall, minimalne storitve, stroge pravice).</li>
+  </ul>
+  <h3 style="color:#ff1a1a; margin:18px 0 10px;">Sistemske zahteve</h3>
+  <ul style="margin-left:20px; line-height:1.7;">
+    <li>CPU: 64-bit (2 jedra ali več priporočeno)</li>
+    <li>RAM: 2 GB minimum, 4 GB priporočeno</li>
+    <li>Disk: 12 GB prostega prostora</li>
+  </ul>
+  <h3 style="color:#ff1a1a; margin:18px 0 10px;">Namestitev</h3>
+  <ol style="margin-left:20px; line-height:1.7;">
+    <li>Prenesi ISO sliko.</li>
+    <li>Ustvari USB (Rufus/Balena Etcher).</li>
+    <li>Zaženi z USB in sledi “Clean Install” čarovniku.</li>
+    <li>Po koncu izberi “Performance” profil.</li>
+  </ol>
+  <div style="margin-top:24px; text-align:center;">
+    <a class="fancy-button" href="mailto:admin@cartel-os.local?subject=Cartel%20OS%20ISO%20Request">
+      ZAHTEVAJ NAMESTITVENO SLIKO
+    </a>
+  </div>
+</section>
 
 <section id="adminPanel">
 <h2>Admin Panel</h2>
@@ -170,8 +202,26 @@ let REF_EMAIL_HASH="", REF_PASS_HASH="";
 
 /* --- NAVIGATION --- */
 const sections=document.querySelectorAll("section");
-function openSection(id){document.getElementById("lobby").style.display="none";sections.forEach(s=>s.classList.remove("active"));document.getElementById(id).classList.add("active");document.getElementById("backLobby").classList.add("visible");}
-function showLobby(){document.getElementById("lobby").style.display="flex";sections.forEach(s=>s.classList.remove("active"));document.getElementById("backLobby").classList.remove("visible");}
+const sectionIds=Array.from(sections).map(section=>section.id);
+function openSection(id){
+  document.getElementById("lobby").style.display="none";
+  sections.forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  document.getElementById("backLobby").classList.add("visible");
+  if(id!=="adminPanel"){window.location.hash=id;}
+}
+function showLobby(){
+  document.getElementById("lobby").style.display="flex";
+  sections.forEach(s=>s.classList.remove("active"));
+  document.getElementById("backLobby").classList.remove("visible");
+  window.location.hash="";
+}
+if(window.location.hash){
+  const target=window.location.hash.replace("#","");
+  if(sectionIds.includes(target)){
+    openSection(target);
+  }
+}
 
 /* --- ADMIN LOGIN --- */
 const adminUser=document.getElementById("adminUser");
